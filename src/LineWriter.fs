@@ -9,19 +9,29 @@ open LineParser
 
 /// Writes out a list of tokens to the output, coloured appropriately.
 /// This also ensures the print out is aligned with the prompt
-let private writeTokens promptPos tokens = 
-    let align () = if Console.CursorLeft < promptPos then Console.CursorLeft <- promptPos
-    let printAligned (s: string) = 
+let private writeTokens promptPos tokens =
+    let align () =
+        if Console.CursorLeft < promptPos then
+            Console.CursorLeft <- promptPos
+
+    let printAligned (s: string) =
         let lines = s.Split newline
-        lines |> Array.iteri (fun i line -> 
+
+        lines
+        |> Array.iteri (fun i line ->
             align ()
-            if line <> "" then printf "%s " line
-            if i <> lines.Length - 1 then 
-                printf "%s" newline)
-    tokens 
+
+            if line <> "" then
+                printf "%s " line
+
+            if i <> lines.Length - 1 then
+                printf "%s" newline
+        )
+
+    tokens
     |> List.iter (fun token ->
         match token with
-        | Command (s, args) -> 
+        | Command (s, args) ->
             apply Colours.command
             printAligned s
             apply Colours.argument
@@ -37,20 +47,23 @@ let private writeTokens promptPos tokens =
             printAligned (if append then ">" else ">>")
             apply Colours.argument
             printAligned fileName
-        | Whitespace n ->
-            printAligned (String (' ', n))
-        | Linebreak ->
-            printfn "")
+        | Whitespace n -> printAligned (String(' ', n))
+        | Linebreak -> printfn ""
+    )
 
-/// This ensures the output is cleared of prior characters before printing. 
+/// This ensures the output is cleared of prior characters before printing.
 /// It goes over the maximum number of lines of any prior entry, which ensures when jumping through history the output looks write.
 let private clearLines linesToClear startLine startPos =
-    [1..linesToClear] 
-    |> Seq.iter (fun n -> 
-        let clearLine = String (' ', (Console.BufferWidth - Console.CursorLeft) - 4)
-        if n <> linesToClear 
-        then printf "%s%s" clearLine newline
-        else printf "%s" clearLine)
+    [ 1..linesToClear ]
+    |> Seq.iter (fun n ->
+        let clearLine = String(' ', (Console.BufferWidth - Console.CursorLeft) - 4)
+
+        if n <> linesToClear then
+            printf "%s%s" clearLine newline
+        else
+            printf "%s" clearLine
+    )
+
     Console.CursorTop <- startLine
     Console.CursorLeft <- startPos
 
@@ -59,9 +72,16 @@ let private clearLines linesToClear startLine startPos =
 let printFormatted (soFar: string) linesToClear startPos startLine =
     let parts = parts soFar // From LineParser.fs, breaks the input into its parts
     let tokens = tokens parts // Also from LineParser.fs, groups and tags the parts by type (e.g. Code)
-    
+
     clearLines linesToClear startLine startPos
-        
+
     writeTokens startPos tokens // Writes the types out, coloured.
     // finally, return the last non-whitespace token (used to control the behaviour of tab).
-    tokens |> List.filter (function | Whitespace _ | Linebreak -> false | _ -> true) |> List.tryLast
+    tokens
+    |> List.filter (
+        function
+        | Whitespace _
+        | Linebreak -> false
+        | _ -> true
+    )
+    |> List.tryLast

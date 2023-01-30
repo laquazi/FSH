@@ -6,34 +6,35 @@ open System.Text
 
 /// Token is a DU used to tag parts of a read input.
 /// It is used for piping content, and cosmetically for colouring user input.
-type Token = 
+type Token =
     /// A command is either a builtin or an external process to run.
-    | Command of text:string * arguments:string list 
+    | Command of text: string * arguments: string list
     /// Code is wrapped F# to be passed through the integrated Interactive process.
-    | Code of string 
+    | Code of string
     /// Pipe indicates the output of what came before should be fed into what comes after.
-    | Pipe 
+    | Pipe
     /// Out is a final operation to send the output of what came before to a file.
-    | Out of append: bool * fileName:string
+    | Out of append: bool * fileName: string
     /// Represents a chunk of whitespace, used to preserve rendering as written, mostly.
-    | Whitespace of length:int
+    | Whitespace of length: int
     /// Like whitespace, is used for formatting mostly
-    | Linebreak 
+    | Linebreak
 
 /// OutputWriter is a log out container used to capture the output of everything except for the last token in a command chain.
 /// It captures log lines using mutable internal string builders, which are then returned for the next token in the chain using the asResult member function.
-type OutputWriter () =
-    let out = StringBuilder ()
-    let error = StringBuilder ()
+type OutputWriter() =
+    let out = StringBuilder()
+    let error = StringBuilder()
     /// Non-error output content. Will be piped to the next token or console out.
-    member __.writeOut (s: string) =
-        out.AppendLine s |> ignore
+    member __.writeOut(s: string) = out.AppendLine s |> ignore
     /// Error output content. If this is used by a token's processor, then the full token process stops and the output is written to console out.
-    member __.writeError (s: string) =
-        error.AppendLine s |> ignore
+    member __.writeError(s: string) = error.AppendLine s |> ignore
+
     /// Used for piping, produces a Result<string, string> that is evaluated to see if processing should continue, and with what.
     /// This also trims off errant new lines at the end of the content.
-    member __.asResult () = 
-        let out = (string out).TrimEnd ([|'\r';'\n'|])
-        let error = (string error).TrimEnd ([|'\r';'\n'|])
+    member __.asResult() =
+        let out = (string out).TrimEnd([| '\r'; '\n' |])
+
+        let error = (string error).TrimEnd([| '\r'; '\n' |])
+
         if error <> "" then Error error else Ok out

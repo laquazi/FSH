@@ -20,18 +20,18 @@ module Colours =
     let pipe = ConsoleColor.Green
     let neutral = ConsoleColor.Gray
 
-/// Sets the console foreground to the specified colour. 
+/// Sets the console foreground to the specified colour.
 /// Intended to be used with the colours module, e.g. apply Colours.prompt.
 let apply colour = Console.ForegroundColor <- colour
 
 /// This simple utility method switches colour to print a piece of text then switches back
 /// It is primarily used for the intro text of FSH
-let printc colour text = 
+let printc colour text =
     let current = Console.ForegroundColor
     apply colour
     printf "%s" text
     apply current
-       
+
 let isWindows = RuntimeInformation.IsOSPlatform OSPlatform.Windows
 
 let newline = if isWindows then "\r\n" else "\n"
@@ -41,4 +41,5 @@ let codeSpaces = 4
 
 /// Thrown when launching a process that isn't an executable, e.g. a txt file.
 /// Defined so that the code can check for this, then try using explorer on windows.
-let notExecutableError = "The specified executable is not a valid application for this OS platform."
+let notExecutableError =
+    "The specified executable is not a valid application for this OS platform."

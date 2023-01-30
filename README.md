@@ -28,7 +28,7 @@ As you type the above, the text is coloured automatically by the type of express
 
 For something more advanced, you could implement a simple 'grep' command (grep is not built in to FSH by default):
 
-	(let grep (s:string) arr = 
+	(let grep (s:string) arr =
 		arr |> Array.filter (fun line -> line.Contains(s)))
 
 (**Note:** that shift/alt/control+enter will go to a new line, useful for code. Tabbing (four spaces) works as well, shunting the current line forward. Also, by piping arr on the second line, the line parameter does not need a type annotation.)
@@ -49,9 +49,9 @@ This can be used with any token, not just 'built-ins' like `echo` and `ls`. For 
 
 On my machine, this will print:
 
-	Console Application                               console            [C#], F#, VB      Common/Console                   
-	Class library                                     classlib           [C#], F#, VB      Common/Library                   
-	Unit Test Project                                 mstest             [C#], F#, VB      Test/MSTest                      
+	Console Application                               console            [C#], F#, VB      Common/Console
+	Class library                                     classlib           [C#], F#, VB      Common/Library
+	Unit Test Project                                 mstest             [C#], F#, VB      Test/MSTest
 	... and so on
 
 ## Installing and Running
@@ -81,7 +81,7 @@ All builtins are defined in [Builtins.fs](/src/Builtins.fs)
 
 ## Code expressions
 
-Code expressions are written by wrapping code with `(` and `)`. Only the outer most parentheses are parsed as wrappers, so for example `(fun (s:string) -> s.ToUpper())` is perfectly fine. 
+Code expressions are written by wrapping code with `(` and `)`. Only the outer most parentheses are parsed as wrappers, so for example `(fun (s:string) -> s.ToUpper())` is perfectly fine.
 
 If a code expression is the first expression on a line, then it is treated as a **FSI Interaction**. Otherwise it is treated as a **FSI Expression**. What is the difference?
 
@@ -117,7 +117,7 @@ To get "FSH says Hello World!" printed to the console.
 
 ### Interactions and 'it'
 
-By default, FSI will evaluate an interaction and return `unit` if successful. 
+By default, FSI will evaluate an interaction and return `unit` if successful.
 In order to make interactions useful as the first token of a piped expression, after an interaction is evaluated FSH will attempt to evaluate the expression 'it' and send its value on to the next token (or console out, if the last expression).
 
 If this evaluation fails, then an empty string is passed along. Otherwise, if found, then 'it' is *set* to "", before the value is passed along. This is so that 'it', is cleared in case the use of later interaction doesn't overwrite it.
@@ -126,7 +126,7 @@ Code is run in [Interactive.fs](/src/Interactive.fs), which wraps FSI. For furth
 
 ## Why?
 
-This has been developed for the **[2019 F# Applied Competition](http://foundation.fsharp.org/applied_fsharp_challenge)**, as an educational project, over the course of about a month. 
+This has been developed for the **[2019 F# Applied Competition](http://foundation.fsharp.org/applied_fsharp_challenge)**, as an educational project, over the course of about a month.
 
 > **Update:** It won in one of the competition categories, I am proud to say. Full results [here](http://foundation.fsharp.org/results_applied_fsharp_2019).
 
